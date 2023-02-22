@@ -15,6 +15,8 @@ import java.util.concurrent.TimeoutException;
 public class Receiver {
 
   private static final int NUM_THREADS = 10;
+  private static final String SWIPE_LEFT = "left";
+  private static final String SWIPE_RIGHT = "right";
   private ConcurrentMap<String, DataStore> dataStoreMap;
   private ConnectionFactory factory;
   private Connection connection;
@@ -37,6 +39,25 @@ public class Receiver {
       Consumers consumerObject = new Consumers(connection, dataStoreMap);
       consumers[i] = new Thread(consumerObject);
       consumers[i].start();
+    }
+  }
+
+  public void numberOfLikesAndDislikes(String userId) {
+    DataStore dataStore = dataStoreMap.get(userId);
+    System.out.println("The number of ppl user has swiped left on: " +
+        dataStore.getSwipeStore().get(SWIPE_LEFT).size());
+    System.out.println("The number of ppl user has swiped right on: " +
+        dataStore.getSwipeStore().get(SWIPE_RIGHT).size());
+  }
+
+  public void listOfRightSwipedUsers(String userId) {
+    DataStore dataStore = dataStoreMap.get(userId);
+    int count = 0;
+    for(String swipeeId : dataStore.getSwipeStore().get(SWIPE_RIGHT)) {
+      if(count > 100)
+        break;
+      System.out.println(userId + "has swiped right on: " + swipeeId);
+      count++;
     }
   }
 
