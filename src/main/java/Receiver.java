@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class Receiver {
 
-  private static final int NUM_THREADS = 10;
+  private static final int NUM_THREADS = 200;
   private static final String SWIPE_LEFT = "left";
   private static final String SWIPE_RIGHT = "right";
   private ConcurrentMap<String, DataStore> dataStoreMap;
@@ -35,7 +35,7 @@ public class Receiver {
   public void receiveMessage() {
 
     Thread[] consumers = new Thread[NUM_THREADS];
-    for(int i = 0; i < 10; i++) {
+    for(int i = 0; i < NUM_THREADS; i++) {
       Consumers consumerObject = new Consumers(connection, dataStoreMap);
       consumers[i] = new Thread(consumerObject);
       consumers[i].start();

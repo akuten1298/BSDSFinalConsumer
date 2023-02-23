@@ -36,11 +36,7 @@ public class Consumers implements Runnable {
 
       dataStore.updateStore(message.getSwipeDirection(), message.getSwipeeId());
 
-      dataStore.getListContents();
-
       dataStoreMap.put(message.getSwiperId(), dataStore);
-      System.out.println(Thread.currentThread().getName()  + " [x] Received '" + msg + "'");
-
     };
 
     try {
