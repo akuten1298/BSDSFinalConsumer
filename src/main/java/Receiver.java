@@ -14,7 +14,7 @@ import java.util.concurrent.TimeoutException;
  */
 public class Receiver {
 
-  private static final int NUM_THREADS = 10;
+  private static final int NUM_THREADS = 200;
   private static final String RMQ_EC2 = "34.219.64.77";
   private static final String LOCALHOST = "localhost";
   private static final String SWIPE_LEFT = "left";
@@ -26,9 +26,8 @@ public class Receiver {
   public Receiver() {
     dataStoreMap = new ConcurrentHashMap<>();
     factory = new ConnectionFactory();
-    factory.setHost(RMQ_EC2);
-    factory.setUsername("test");
-    factory.setPassword("test");
+    factory.setHost(LOCALHOST);
+    setUserCredentials(factory);
     try {
       connection = factory.newConnection();
       } catch (IOException | TimeoutException e) {
@@ -62,6 +61,16 @@ public class Receiver {
         break;
       System.out.println(userId + "has swiped right on: " + swipeeId);
       count++;
+    }
+  }
+
+  public void setUserCredentials(ConnectionFactory factory) {
+    if(LOCALHOST.equals(factory.getHost())) {
+      factory.setUsername("guest");
+      factory.setPassword("guest");
+    } else {
+      factory.setUsername("test");
+      factory.setPassword("test");
     }
   }
 
