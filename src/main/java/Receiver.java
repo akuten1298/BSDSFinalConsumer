@@ -15,7 +15,8 @@ import java.util.concurrent.TimeoutException;
 public class Receiver {
 
   private static final int NUM_THREADS = 200;
-  private static final String RMQ_EC2 = "18.236.161.239";
+  private static final String RMQ_EC2 = "172.31.29.115";
+  private static final int RMQ_LB_PORT = 5672;
   private static final String LOCALHOST = "localhost";
   private static final String SWIPE_LEFT = "left";
   private static final String SWIPE_RIGHT = "right";
@@ -27,6 +28,7 @@ public class Receiver {
     dataStoreMap = new ConcurrentHashMap<>();
     factory = new ConnectionFactory();
     factory.setHost(RMQ_EC2);
+    factory.setPort(RMQ_LB_PORT);
     setUserCredentials(factory);
     try {
       connection = factory.newConnection();
