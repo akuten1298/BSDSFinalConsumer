@@ -1,3 +1,4 @@
+import com.mongodb.client.MongoClient;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -14,8 +15,8 @@ import java.util.concurrent.TimeoutException;
  */
 public class Receiver {
 
-  private static final int NUM_THREADS = 200;
-  private static final String RMQ_EC2 = "172.31.29.115";
+  private static final int NUM_THREADS = 10;
+  private static final String RMQ_EC2 = "18.236.102.133";
   private static final int RMQ_LB_PORT = 5672;
   private static final String LOCALHOST = "localhost";
   private static final String SWIPE_LEFT = "left";
@@ -73,6 +74,9 @@ public class Receiver {
   }
 
   public static void main(String[] argv) {
+    MongoConfig mongoConfig = MongoConfig.getInstance();
+    MongoClient mongoClient = mongoConfig.getMongoClient();
+    Runtime.getRuntime().addShutdownHook(new Thread(mongoClient::close));
     Receiver receiver = new Receiver();
     receiver.receiveMessage();
   }
