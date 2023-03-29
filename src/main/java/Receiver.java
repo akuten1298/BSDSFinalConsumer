@@ -16,7 +16,7 @@ import java.util.concurrent.TimeoutException;
 public class Receiver {
 
   private static final int NUM_THREADS = 10;
-  private static final String RMQ_EC2 = "18.236.102.133";
+  private static final String RMQ_EC2 = "35.92.48.54";
   private static final int RMQ_LB_PORT = 5672;
   private static final String LOCALHOST = "localhost";
   private static final String SWIPE_LEFT = "left";

@@ -7,11 +7,9 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
 import org.bson.Document;
 
+import javax.print.Doc;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentMap;
 
 import static com.mongodb.client.model.Filters.eq;
@@ -23,19 +21,23 @@ import static com.mongodb.client.model.Updates.set;
 public class Consumers implements Runnable {
   private static MongoCollection<Document> statsCollection;
   private static MongoCollection<Document> matchesCollection;
+  private static MongoCollection<Document> swipeCollection;
 
   private static final String QUEUE_NAME = "twinder_queue";
   private static String MONGO_ID = "_id";
   private static String NUM_LIKES = "numLikes";
   private static String NUM_DISLIKES = "numDislikes";
+  private static String LIKES = "likes";
+  private static String DISLIKES = "dislikes";
   private static String STATS_DB = "stats";
   private static String MATCHES_DB = "matches";
+  private static String SWIPE_DB = "swipe";
   private static String USER_ID = "userId";
   private static String LEFT = "left";
   private static String RIGHT = "right";
   private static String RIGHT_SWIPED = "rightSwiped";
   private static String MATCH_LIST = "matchList";
-
+  private static String COMMENTS = "comments";
 
   private Channel channel;
   private ConcurrentMap<String, DataStore> dataStoreMap;
@@ -48,8 +50,11 @@ public class Consumers implements Runnable {
 
       MongoConfig mongoConfig = MongoConfig.getInstance();
       MongoDatabase database = mongoConfig.getDatabase();
+
       statsCollection = database.getCollection(STATS_DB);
       matchesCollection = database.getCollection(MATCHES_DB);
+      swipeCollection = database.getCollection(SWIPE_DB);
+
     } catch (IOException e) {
       System.out.println(e.getMessage());
     }
@@ -72,15 +77,40 @@ public class Consumers implements Runnable {
 //
 //      dataStoreMap.put(message.getSwiperId(), dataStore);
 
-      System.out.println("Message: " + message);
-      updateStats(message);
-      updateMatches(message);
+//      updateStats(message);
+//      updateMatches(message);
+      addToDB(message);
     };
 
     try {
       channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> { });
     } catch (IOException e) {
       throw new RuntimeException(e);
+    }
+  }
+
+  public void addToDB(Message message) {
+    Document swiperDoc = swipeCollection.find(eq(MONGO_ID, message.getSwiperId())).first();
+    if (swiperDoc == null) {
+      swiperDoc = new Document(MONGO_ID, message.getSwiperId());
+      Set<String> likesSet = new HashSet<>();
+      Set<String> disLikesSet = new HashSet<>();
+
+      if(RIGHT.equals(message.getSwipeDirection())) {
+        likesSet.add(message.getSwipeeId());
+      } else {
+        disLikesSet.add(message.getSwipeeId());
+      }
+
+      swiperDoc.put(LIKES, likesSet);
+      swiperDoc.put(DISLIKES, disLikesSet);
+      swipeCollection.insertOne(swiperDoc);
+    } else {
+      Set<String> subDocument = new HashSet<>((Collection) (RIGHT.equals(message.getSwipeDirection()) ?
+                          swiperDoc.get(LIKES) : swiperDoc.get(DISLIKES)));
+      subDocument.add(message.getSwipeeId());
+      swipeCollection.updateOne(swiperDoc, set(RIGHT.equals(message.getSwipeDirection()) ?
+              LIKES : DISLIKES, subDocument));
     }
   }
 
