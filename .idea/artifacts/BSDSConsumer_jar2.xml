@@ -1,0 +1,25 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="BSDSConsumer:jar2">
+    <output-path>$PROJECT_DIR$/out/artifacts/BSDSConsumer_jar2</output-path>
+    <root id="archive" name="BSDSConsumer.jar">
+      <element id="directory" name="META-INF">
+        <element id="file-copy" path="$PROJECT_DIR$/META-INF/MANIFEST.MF" />
+      </element>
+      <element id="module-output" name="BSDSConsumer" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/com/rabbitmq/amqp-client/5.16.0/amqp-client-5.16.0.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/ch/qos/logback/logback-classic/1.2.6/logback-classic-1.2.6.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mongodb/mongodb-driver-sync/4.4.1/mongodb-driver-sync-4.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mongodb/bson/4.4.1/bson-4.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/mongodb/mongodb-driver-core/4.4.1/mongodb-driver-core-4.4.1.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/org/slf4j/slf4j-api/1.7.32/slf4j-api-1.7.32.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$MAVEN_REPOSITORY$/ch/qos/logback/logback-core/1.2.6/logback-core-1.2.6.jar" path-in-jar="/" />
+      <element id="library" level="project" name="Maven: ch.qos.logback:logback-classic:1.2.6" />
+      <element id="library" level="project" name="Maven: ch.qos.logback:logback-core:1.2.6" />
+      <element id="library" level="project" name="Maven: org.mongodb:bson:4.4.1" />
+      <element id="library" level="project" name="Maven: com.rabbitmq:amqp-client:5.16.0" />
+      <element id="library" level="project" name="Maven: org.mongodb:mongodb-driver-sync:4.4.1" />
+      <element id="library" level="project" name="Maven: org.mongodb:mongodb-driver-core:4.4.1" />
+      <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.32" />
+    </root>
+  </artifact>
+</component>

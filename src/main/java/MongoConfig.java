@@ -17,7 +17,7 @@ public class MongoConfig {
     }
 
     public MongoConfig() {
-        String connectionString = "mongodb+srv://twinder_username:twinder_password@twindercluster.rdueczb.mongodb.net/?retryWrites=true&w=majority";
+        String connectionString = "mongodb+srv://twinder_username:twinder_password@twindercluster.rdueczb.mongodb.net/twinder?retryWrites=true&w=majority";
         MongoClientSettings settings = MongoClientSettings.builder()
                 .applyConnectionString(new ConnectionString(connectionString))
                 .build();
