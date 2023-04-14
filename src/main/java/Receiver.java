@@ -19,7 +19,7 @@ public class Receiver {
 
   private static final int NUM_THREADS = 100;
   private static final int WRITER_THREADS = 200;
-  private static final String RMQ_EC2 = "172.31.29.115";
+  private static final String RMQ_EC2 = "35.87.18.235";
   private static final int RMQ_LB_PORT = 5672;
   private static final String LOCALHOST = "localhost";
   private static final String SWIPE_LEFT = "left";
@@ -39,11 +39,12 @@ public class Receiver {
     setUserCredentials(factory);
     try {
       connection = factory.newConnection();
-      } catch (IOException | TimeoutException e) {
+    } catch (IOException | TimeoutException e) {
       System.out.println(e.getMessage());
       System.out.println(e.getMessage());
     }
   }
+
 
   public void receiveMessage() {
 
@@ -60,16 +61,14 @@ public class Receiver {
       consumers[i] = new Thread(consumerObject);
       consumers[i].start();
     }
-
-
   }
 
   public void numberOfLikesAndDislikes(String userId) {
     DataStore dataStore = dataStoreMap.get(userId);
     System.out.println("The number of ppl user has swiped left on: " +
-        dataStore.getSwipeStore().get(SWIPE_LEFT).size());
+            dataStore.getSwipeStore().get(SWIPE_LEFT).size());
     System.out.println("The number of ppl user has swiped right on: " +
-        dataStore.getSwipeStore().get(SWIPE_RIGHT).size());
+            dataStore.getSwipeStore().get(SWIPE_RIGHT).size());
   }
 
   public void listOfRightSwipedUsers(String userId) {
@@ -84,8 +83,10 @@ public class Receiver {
   }
 
   public void setUserCredentials(ConnectionFactory factory) {
-      factory.setUsername("guest");
-      factory.setPassword("guest");
+    factory.setUsername("guest");
+    factory.setPassword("guest");
+    factory.setVirtualHost("v1");
+    factory.setPort(RMQ_LB_PORT);
   }
 
   public static void main(String[] argv) {
@@ -93,8 +94,8 @@ public class Receiver {
 
     // Mongo setup
     MongoConfig mongoConfig = MongoConfig.getInstance();
-    MongoClient mongoClient = mongoConfig.getMongoClient();
-    Runtime.getRuntime().addShutdownHook(new Thread(mongoClient::close));
+    MongoClient primaryMongoClient = mongoConfig.getMongoClient();
+    Runtime.getRuntime().addShutdownHook(new Thread(primaryMongoClient::close));
 
 
     Receiver receiver = new Receiver();

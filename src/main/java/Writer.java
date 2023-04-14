@@ -1,3 +1,4 @@
+import com.mongodb.WriteConcern;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.BulkWriteOptions;
@@ -9,7 +10,8 @@ import java.util.concurrent.BlockingQueue;
 
 public class Writer implements Runnable {
 
-    private static String SWIPE_DB = "swipe";
+    //private static String SWIPE_DB = "swipe";
+    private static String COLLECTION_NAME = "twinders";
     private BlockingQueue<List<WriteModel<Document>>> queue;
     private static MongoCollection<Document> swipeCollection;
 
@@ -17,10 +19,11 @@ public class Writer implements Runnable {
         this.queue = queue;
 
         MongoConfig mongoConfig = MongoConfig.getInstance();
-        MongoDatabase database = mongoConfig.getDatabase();
+        MongoDatabase primaryDB = mongoConfig.getDatabase();
 
-        swipeCollection = database.getCollection(SWIPE_DB);
+        swipeCollection = primaryDB.getCollection(COLLECTION_NAME);
     }
+
 
     @Override
     public void run() {
@@ -29,6 +32,8 @@ public class Writer implements Runnable {
                 List<WriteModel<Document>> item = queue.take();
                 BulkWriteOptions options = new BulkWriteOptions().ordered(false);
                 swipeCollection.bulkWrite(item, options);
+                //swipeCollection.bulkWrite(item, new BulkWriteOptions().ordered(false));
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
