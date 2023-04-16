@@ -7,10 +7,14 @@ import com.mongodb.client.result.UpdateResult;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.DeliverCallback;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
+import org.apache.kafka.clients.consumer.ConsumerRecords;
+import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.bson.Document;
 
 import javax.print.Doc;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentMap;
@@ -49,34 +53,55 @@ public class Consumers implements Runnable {
                    BlockingQueue<List<WriteModel<Document>>> queue) {
     this.dataStoreMap = dataStoreMap;
     this.queue = queue;
-    try {
-      channel = connection.createChannel();
-      boolean durable = true;
-      channel.queueDeclare(QUEUE_NAME, durable, false, false, null);
-
-      upsertList = new ArrayList<>();
-
-    } catch (IOException e) {
-      System.out.println(e.getMessage());
-    }
+//    try {
+//      channel = connection.createChannel();
+//      boolean durable = true;
+//      channel.queueDeclare(QUEUE_NAME, durable, false, false, null);
+//
+//      upsertList = new ArrayList<>();
+//
+//    } catch (IOException e) {
+//      System.out.println(e.getMessage());
+//    }
   }
 
   @Override
   public void run() {
     System.out.println("Started Thread: " + Thread.currentThread().getName() + " [*] Waiting for messages.");
 
-    DeliverCallback deliverCallback = (consumerTag, delivery) -> {
-      String msg = new String(delivery.getBody(), "UTF-8");
-      String[] contents = msg.split(",");
-      Message message = new Message(contents);
-      addToDB(message);
-    };
+    // RabbitMQ
+//    DeliverCallback deliverCallback = (consumerTag, delivery) -> {
+//      String msg = new String(delivery.getBody(), "UTF-8");
+//      String[] contents = msg.split(",");
+//      Message message = new Message(contents);
+//      addToDB(message);
+//    };
+//
+//    try {
+//      channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> { });
+//    } catch (IOException e) {
+//      throw new RuntimeException(e);
+//    }
 
-    try {
-      channel.basicConsume(QUEUE_NAME, true, deliverCallback, consumerTag -> { });
-    } catch (IOException e) {
-      throw new RuntimeException(e);
+    Properties props = new Properties();
+    props.put("group.id", "console-consumer-19543");
+    props.put("bootstrap.servers", "ec2-54-191-185-147.us-west-2.compute.amazonaws.com:9092");
+    props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+    props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+
+    KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+
+    consumer.subscribe(Collections.singleton("left"));
+
+    while (true) {
+      ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
+      for (ConsumerRecord<String, String> record : records) {
+        System.out.printf("Received message: key=%s, value=%s, topic=%s, partition=%d, offset=%d\n",
+                record.key(), record.value(), record.topic(), record.partition(), record.offset());
+      }
     }
+
+
   }
 
   public void addToDB(Message message) {

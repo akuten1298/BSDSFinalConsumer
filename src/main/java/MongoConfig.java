@@ -27,7 +27,7 @@ public class MongoConfig {
     private static String primaryDatabaseName = "TwinderDB";
     private static String secondaryDatabaseName = "TwinderSecondary";
     private static String collectionName = "twinders";
-    private static String primaryEC2IP = "35.90.20.84";
+    private static String primaryEC2IP = "35.88.140.48";
     private static String secondaryEC2IP = "54.244.131.7";
     private static String mongoDB_id = "admin";
     private static String mongoDB_pw = "password";
