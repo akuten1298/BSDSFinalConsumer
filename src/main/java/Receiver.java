@@ -17,8 +17,8 @@ import java.util.concurrent.*;
  */
 public class Receiver {
 
-  private static final int NUM_THREADS = 100;
-  private static final int WRITER_THREADS = 200;
+  private static final int NUM_THREADS = 1;
+  private static final int WRITER_THREADS = 1;
   private static final String RMQ_EC2 = "35.87.18.235";
   private static final int RMQ_LB_PORT = 5672;
   private static final String LOCALHOST = "localhost";
@@ -33,16 +33,16 @@ public class Receiver {
     dataStoreMap = new ConcurrentHashMap<>();
     queue = new ArrayBlockingQueue<>(500000);
 
-    factory = new ConnectionFactory();
-    factory.setHost(RMQ_EC2);
-    factory.setPort(RMQ_LB_PORT);
-    setUserCredentials(factory);
-    try {
-      connection = factory.newConnection();
-    } catch (IOException | TimeoutException e) {
-      System.out.println(e.getMessage());
-      System.out.println(e.getMessage());
-    }
+//    factory = new ConnectionFactory();
+//    factory.setHost(RMQ_EC2);
+//    factory.setPort(RMQ_LB_PORT);
+//    setUserCredentials(factory);
+//    try {
+//      connection = factory.newConnection();
+//    } catch (IOException | TimeoutException e) {
+//      System.out.println(e.getMessage());
+//      System.out.println(e.getMessage());
+//    }
   }
 
 

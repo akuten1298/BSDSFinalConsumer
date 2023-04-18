@@ -6,8 +6,8 @@ import java.util.List;
  */
 public class Message {
 
-  private String swiperId;
-  private String swipeeId;
+  private String swiper;
+  private String swipee;
   private String comment;
   private String swipeDirection;
 
@@ -18,8 +18,8 @@ public class Message {
       filteredContent.add(content.substring(equalsIndex + 1));
     }
 
-    swiperId = filteredContent.get(0);
-    swipeeId = filteredContent.get(1);
+    swiper = filteredContent.get(0);
+    swipee = filteredContent.get(1);
     comment = filteredContent.get(2);
     swipeDirection = filteredContent.get(3);
   }
@@ -27,19 +27,19 @@ public class Message {
   @Override
   public String toString() {
     return "Message{" +
-        "swiperId='" + swiperId + '\'' +
-        ", swipeeId='" + swipeeId + '\'' +
+        "swiper='" + swiper + '\'' +
+        ", swipee='" + swipee + '\'' +
         ", comment='" + comment + '\'' +
         ", swipeDirection='" + swipeDirection + '\'' +
         '}';
   }
 
-  public String getSwiperId() {
-    return swiperId;
+  public String getSwiper() {
+    return swiper;
   }
 
-  public String getSwipeeId() {
-    return swipeeId;
+  public String getSwipee() {
+    return swipee;
   }
 
   public String getComment() {
