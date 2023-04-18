@@ -43,7 +43,7 @@ public class Consumers implements Runnable {
   private static String RIGHT_SWIPED = "rightSwiped";
   private static String MATCH_LIST = "matchList";
   private static String COMMENTS = "comments";
-  private int DB_BATCH_SIZE = 1;
+  private int DB_BATCH_SIZE = 500;
 
   private Channel channel;
   private ConcurrentMap<String, DataStore> dataStoreMap;
@@ -87,7 +87,7 @@ public class Consumers implements Runnable {
 
     Properties props = new Properties();
     props.put("group.id", "console-consumer-19543");
-    props.put("bootstrap.servers", "ec2-34-216-48-154.us-west-2.compute.amazonaws.com:9092");
+    props.put("bootstrap.servers", " ec2-54-202-89-47.us-west-2.compute.amazonaws.com:9092");
     props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     props.put("auto.offset.reset", "earliest"); // set auto.offset.reset to earliest

@@ -17,8 +17,8 @@ import java.util.concurrent.*;
  */
 public class Receiver {
 
-  private static final int NUM_THREADS = 1;
-  private static final int WRITER_THREADS = 1;
+  private static final int NUM_THREADS = 100;
+  private static final int WRITER_THREADS = 100;
   private static final String RMQ_EC2 = "35.87.18.235";
   private static final int RMQ_LB_PORT = 5672;
   private static final String LOCALHOST = "localhost";
