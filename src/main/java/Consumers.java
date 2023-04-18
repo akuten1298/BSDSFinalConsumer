@@ -31,7 +31,7 @@ public class Consumers implements Runnable {
   private static final String QUEUE_NAME = "LIKE";
 
   //private static String MONGO_ID = "_id";
-  private static final String MONGO_ID = "SwiperID";
+  private static final String MONGO_ID = "_id";
   private static String NUM_LIKES = "numLikes";
   private static String NUM_DISLIKES = "numDislikes";
   private static String LIKES = "likes";
