@@ -1,3 +1,4 @@
+import com.google.gson.Gson;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.UpdateOneModel;
@@ -42,7 +43,7 @@ public class Consumers implements Runnable {
   private static String RIGHT_SWIPED = "rightSwiped";
   private static String MATCH_LIST = "matchList";
   private static String COMMENTS = "comments";
-  private int DB_BATCH_SIZE = 1000;
+  private int DB_BATCH_SIZE = 1;
 
   private Channel channel;
   private ConcurrentMap<String, DataStore> dataStoreMap;
@@ -85,9 +86,10 @@ public class Consumers implements Runnable {
 
     Properties props = new Properties();
     props.put("group.id", "console-consumer-19543");
-    props.put("bootstrap.servers", "ec2-54-191-185-147.us-west-2.compute.amazonaws.com:9092");
+    props.put("bootstrap.servers", "ec2-35-167-59-75.us-west-2.compute.amazonaws.com:9092");
     props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+    props.put("auto.offset.reset", "earliest"); // set auto.offset.reset to earliest
 
     KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 
@@ -96,12 +98,17 @@ public class Consumers implements Runnable {
     while (true) {
       ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
       for (ConsumerRecord<String, String> record : records) {
-        System.out.printf("Received message: key=%s, value=%s, topic=%s, partition=%d, offset=%d\n",
-                record.key(), record.value(), record.topic(), record.partition(), record.offset());
+        System.out.printf("Received message: key=%s, value=%s \n", record.key(), record.value());
+        Message message = deserialize(record.value());
+        System.out.println(message.getComment());
+        addToDB(message);
       }
     }
+  }
 
-
+  private static Message deserialize(String json) {
+    Gson gson = new Gson();
+    return gson.fromJson(json, Message.class);
   }
 
   public void addToDB(Message message) {
