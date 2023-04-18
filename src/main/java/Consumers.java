@@ -54,6 +54,7 @@ public class Consumers implements Runnable {
                    BlockingQueue<List<WriteModel<Document>>> queue) {
     this.dataStoreMap = dataStoreMap;
     this.queue = queue;
+    upsertList = new ArrayList<>();
 //    try {
 //      channel = connection.createChannel();
 //      boolean durable = true;
@@ -86,21 +87,21 @@ public class Consumers implements Runnable {
 
     Properties props = new Properties();
     props.put("group.id", "console-consumer-19543");
-    props.put("bootstrap.servers", "ec2-35-167-59-75.us-west-2.compute.amazonaws.com:9092");
+    props.put("bootstrap.servers", "ec2-34-216-48-154.us-west-2.compute.amazonaws.com:9092");
     props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     props.put("auto.offset.reset", "earliest"); // set auto.offset.reset to earliest
 
     KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
 
-    consumer.subscribe(Collections.singleton("left"));
+    consumer.subscribe(Collections.singleton("users"));
 
     while (true) {
       ConsumerRecords<String, String> records = consumer.poll(Duration.ofMillis(100));
       for (ConsumerRecord<String, String> record : records) {
         System.out.printf("Received message: key=%s, value=%s \n", record.key(), record.value());
         Message message = deserialize(record.value());
-        System.out.println(message.getComment());
+        System.out.println(message.toString());
         addToDB(message);
       }
     }
@@ -121,10 +122,10 @@ public class Consumers implements Runnable {
     }
 
     if(RIGHT.equals(message.getSwipeDirection())) {
-      upsertList.add(new UpdateOneModel<>(new Document(MONGO_ID, message.getSwiperId()), new Document("$push", new Document(LIKES, message.getSwipeeId())),
+      upsertList.add(new UpdateOneModel<>(new Document(MONGO_ID, message.getSwiper()), new Document("$push", new Document(LIKES, message.getSwipee())),
               new UpdateOptions().upsert(true)));
     } else {
-      upsertList.add(new UpdateOneModel<>(new Document(MONGO_ID, message.getSwiperId()), new Document("$push", new Document(DISLIKES, message.getSwipeeId())),
+      upsertList.add(new UpdateOneModel<>(new Document(MONGO_ID, message.getSwiper()), new Document("$push", new Document(DISLIKES, message.getSwipee())),
               new UpdateOptions().upsert(true)));
     }
   }
